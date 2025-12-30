@@ -59,8 +59,11 @@ public class Potion extends Item implements Usable {
      */
     @Override
     public boolean use(Character target) {
-        // TODO: Implement this method
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (canUse(target)) {
+            this.remainingUses = this.remainingUses - 1;
+            return true;
+        }
+        return false;
     }
     
     /**
@@ -76,8 +79,23 @@ public class Potion extends Item implements Usable {
      */
     @Override
     public boolean canUse(Character target) {
-        // TODO: Implement this method
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (this.remainingUses > 0) {
+            switch (this.potionType) {
+                case HEALTH:
+                    if (target.getCurrentHealth() < target.getMaxHealth()) {
+                        return true;
+                    }
+                    break;
+                case MANA:
+                    if (target.getCurrentMana() < target.getMaxMana()) {
+                        return true;
+                    }
+                    break;
+                default:
+                    return (true);
+            }
+        }
+        return false;
     }
     
     @Override
@@ -93,8 +111,10 @@ public class Potion extends Item implements Usable {
      */
     @Override
     public boolean isSellable() {
-        // TODO: Implement this method
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (this.remainingUses < this.maxUses) {
+            return false;
+        }
+        return true;
     }
     
     // Getters

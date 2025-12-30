@@ -1,10 +1,11 @@
 package model.characters;
 
-import model.items.Weapon;
-import model.items.Armor;
-import model.items.Item;
 import model.exceptions.InventoryFullException;
 import model.exceptions.ItemNotFoundException;
+import model.items.Armor;
+import model.items.Item;
+import model.items.Weapon;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
@@ -81,8 +82,15 @@ public abstract class Character implements Attackable {
      */
     @Override
     public void takeDamage(int damage) {
-        // TODO: Implement this method
-        throw new UnsupportedOperationException("Not implemented yet");
+        int RedDmg = 0;
+        for (Armor p : this.equippedArmor.values()) {
+            RedDmg = p.reduceDamage(damage);
+            if (RedDmg > 0) {
+                this.currentHealth -= RedDmg;
+            }
+        }
+
+
     }
     
     /**
@@ -91,8 +99,7 @@ public abstract class Character implements Attackable {
      */
     @Override
     public boolean isAlive() {
-        // TODO: Implement this method
-        throw new UnsupportedOperationException("Not implemented yet");
+        return (currentHealth > 0);
     }
     
     @Override
@@ -118,6 +125,10 @@ public abstract class Character implements Attackable {
      */
     public void addItem(Item item) throws InventoryFullException {
         // TODO: Implement this method
+        if (this.inventory.size() >= maxInventorySize) {
+            throw new InventoryFullException("inventory is full", inventory.size());
+        }
+        inventory.add(item);
         // אם המלאי מלא, זרוק InventoryFullException
         // אחרת, הוסף את הפריט ל-inventory
         throw new UnsupportedOperationException("Not implemented yet");
@@ -133,10 +144,17 @@ public abstract class Character implements Attackable {
      */
     public Item removeItem(String itemName) throws ItemNotFoundException {
         // TODO: Implement this method
+        for (Item item : inventory) {
+            if (item.getName().equals(itemName)) {
+                inventory.remove(item);
+                return item;
+            }
+        }
+        throw new ItemNotFoundException("item: " + itemName + "not found");
+
         // חפש את הפריט לפי שם
         // אם לא נמצא, זרוק ItemNotFoundException
         // אם נמצא, הסר מהמלאי והחזר אותו
-        throw new UnsupportedOperationException("Not implemented yet");
     }
     
     /**
@@ -149,9 +167,15 @@ public abstract class Character implements Attackable {
      */
     public <T extends Item> ArrayList<T> findItemsByType(Class<T> itemClass) {
         // TODO: Implement this method
+        ArrayList<T> arrList = new ArrayList<>();
+        for (Item item : this.inventory) {
+            if (itemClass.isInstance(item)) {
+                arrList.add(itemClass.cast(item));
+            }
+        }
         // עבור על כל הפריטים במלאי
         // אם הפריט הוא מהסוג המבוקש, הוסף אותו לרשימת התוצאות
-        throw new UnsupportedOperationException("Not implemented yet");
+        return (arrList);
     }
     
     /**
@@ -161,11 +185,21 @@ public abstract class Character implements Attackable {
      * @return HashMap של (ItemRarity -> ArrayList של Items)
      */
     public HashMap<Item.ItemRarity, ArrayList<Item>> getItemsByRarity() {
+        HashMap<Item.ItemRarity, ArrayList<Item>> map = new HashMap<>();
+        for (Item item : this.inventory) {
+            Item.ItemRarity rarity = item.getRarity();
+
+            if (!map.containsKey(rarity)) {
+                map.put(rarity, new ArrayList<>());
+            }
+
+            map.get(rarity).add(item);
+        }
+        return map;
         // TODO: Implement this method
         // צור HashMap חדש
         // עבור על כל הפריטים במלאי
         // הוסף כל פריט לרשימה המתאימה לפי הנדירות שלו
-        throw new UnsupportedOperationException("Not implemented yet");
     }
     
     // ============================================================
@@ -182,6 +216,14 @@ public abstract class Character implements Attackable {
      */
     public void equipWeapon(Weapon weapon) throws ItemNotFoundException, InventoryFullException {
         // TODO: Implement this method
+        removeItem(weapon.getName());
+        if (this.equippedWeapon != null) {
+            addItem(weapon);
+        } else {
+            this.equippedWeapon = weapon;
+        }
+
+
         // 1. בדוק שהנשק קיים במלאי
         // 2. אם יש נשק מצויד, החזר אותו למלאי
         // 3. הסר את הנשק החדש מהמלאי
@@ -199,11 +241,16 @@ public abstract class Character implements Attackable {
      */
     public void equipArmor(Armor armor) throws ItemNotFoundException, InventoryFullException {
         // TODO: Implement this method
+        removeItem(armor.getName());
+        if (this.equippedArmor.get(armor.getSlot()) == null) {
+            this.equippedArmor.put(armor.getSlot(), armor);
+        } else {
+            addItem(armor);
+        }
         // 1. בדוק שהשריון קיים במלאי
         // 2. אם יש שריון ב-slot הזה, החזר אותו למלאי
         // 3. הסר את השריון החדש מהמלאי
         // 4. ציית את השריון ב-HashMap לפי ה-slot שלו
-        throw new UnsupportedOperationException("Not implemented yet");
     }
     
     /**
@@ -214,9 +261,11 @@ public abstract class Character implements Attackable {
      */
     public int getTotalDefense() {
         // TODO: Implement this method
-        // חבר את ה-defense מכל השריונים ב-equippedArmor
-        // הוסף את baseDefense
-        throw new UnsupportedOperationException("Not implemented yet");
+        int total = 0;
+        for (Armor p : equippedArmor.values()) {
+            total += p.getDefense();
+        }
+        return total;
     }
     
     // ============================================================
@@ -231,8 +280,12 @@ public abstract class Character implements Attackable {
      * @param amount כמות הריפוי
      */
     public void heal(int amount) {
-        // TODO: Implement this method
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (this.currentHealth + amount > maxHealth) {
+            this.currentHealth = maxHealth;
+            return;
+        }
+        this.currentHealth += amount;
+
     }
     
     /**
@@ -243,8 +296,13 @@ public abstract class Character implements Attackable {
      * @param amount כמות המאנה לשחזור
      */
     public void restoreMana(int amount) {
-        // TODO: Implement this method
-        throw new UnsupportedOperationException("Not implemented yet");
+        // TODO: Implement this
+        //  method
+        if (this.currentMana + amount > maxMana) {
+            this.currentMana = maxMana;
+            return;
+        }
+        this.currentMana += amount;
     }
     
     /**
@@ -256,7 +314,11 @@ public abstract class Character implements Attackable {
      */
     public boolean useMana(int amount) {
         // TODO: Implement this method
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (this.currentMana - amount < 0) {
+            return false;
+        }
+        this.currentMana -= amount;
+        return true;
     }
     
     // ============================================================
@@ -273,9 +335,14 @@ public abstract class Character implements Attackable {
      */
     public void gainExperience(int amount) {
         // TODO: Implement this method
+        this.experience += amount;
+        while (this.experience > this.EXPERIENCE_PER_LEVEL) {
+            this.experience -= this.EXPERIENCE_PER_LEVEL;
+            this.level++;
+            onLevelUp();
+        }
         // הוסף את הניסיון
         // כל עוד יש מספיק ניסיון לרמה הבאה, העלה רמה וקרא ל-onLevelUp
-        throw new UnsupportedOperationException("Not implemented yet");
     }
     
     /**

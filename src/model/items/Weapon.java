@@ -5,7 +5,6 @@ package model.items;
  * יורשת מ-Item ומוסיפה מאפייני נזק.
  */
 public class Weapon extends Item {
-    
     private int minDamage;
     private int maxDamage;
     private WeaponType weaponType;
@@ -57,8 +56,7 @@ public class Weapon extends Item {
      * @return נזק אקראי
      */
     public int calculateDamage() {
-        // TODO: Implement this method
-        throw new UnsupportedOperationException("Not implemented yet");
+        return (int) (Math.random() * (maxDamage - minDamage + 1)) + minDamage;
     }
     
     /**
@@ -68,8 +66,8 @@ public class Weapon extends Item {
      * @return נזק ממוצע (מספר עשרוני)
      */
     public double getAverageDamage() {
-        // TODO: Implement this method
-        throw new UnsupportedOperationException("Not implemented yet");
+        return (double) ((maxDamage + minDamage) / 2);
+
     }
     
     // Getters

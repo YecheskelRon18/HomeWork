@@ -1,11 +1,19 @@
-import model.characters.*;
-import model.items.*;
-import model.exceptions.*;
 import game.*;
+import model.characters.Archer;
+import model.characters.Mage;
+import model.characters.Warrior;
+import model.exceptions.InvalidActionException;
+import model.exceptions.InventoryFullException;
+import model.exceptions.ItemNotFoundException;
+import model.items.Armor;
+import model.items.Item;
+import model.items.Potion;
+import model.items.Weapon;
 import utils.GameUtils;
+
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Comparator;
+import java.util.HashMap;
 
 /**
  * מחלקת בדיקות לפרויקט.
@@ -248,9 +256,7 @@ public class TestProject {
         }
     }
     
-    // ============================================================
-    // בדיקות מערכת קרב
-    // ============================================================
+
     
     private static void testBattleSystem() {
         System.out.println("\n--- Testing Battle System ---");
@@ -261,12 +267,12 @@ public class TestProject {
         BattleSystem battle = new BattleSystem(player, enemy);
         
         test("BattleSystem creation", !battle.isBattleEnded());
-        test("BattleSystem queue empty", battle.isQueueEmpty());
-        
-        // Test queueAction
+        test("BattleSystem queue empty", battle.getBattleLog().isEmpty());
+
+
         try {
             battle.queuePlayerAction(BattleAction.ActionType.ATTACK);
-            test("queueAction", battle.getQueueSize() == 1);
+            test("queueAction", battle.getBattleLog().size() == 1);
         } catch (InvalidActionException e) {
             test("queueAction (invalid)", false);
         } catch (UnsupportedOperationException e) {

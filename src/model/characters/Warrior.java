@@ -1,5 +1,7 @@
 package model.characters;
 
+import model.items.Armor;
+
 /**
  * מחלקה המייצגת לוחם במשחק.
  * יורשת מ-Character.
@@ -34,7 +36,12 @@ public class Warrior extends Character {
     @Override
     protected void onLevelUp() {
         // TODO: Implement this method
-        throw new UnsupportedOperationException("Not implemented yet");
+        this.maxHealth += 20;
+        this.maxMana += 5;
+        this.baseStrength += 3;
+        this.baseDefense += 2;
+        this.currentHealth = this.maxHealth;
+        this.currentMana = this.maxMana;
     }
     
     /**
@@ -47,8 +54,12 @@ public class Warrior extends Character {
      */
     @Override
     public int calculateAttackDamage() {
+        int rageB = Math.ceilDiv(this.rage, 10);
+        if (rageB < 1) {
+            rageB = 1;
+        }
+        return (int) (rageB + baseStrength + this.equippedWeapon.getAverageDamage());
         // TODO: Implement this method
-        throw new UnsupportedOperationException("Not implemented yet");
     }
     
     /**
@@ -63,8 +74,13 @@ public class Warrior extends Character {
      */
     @Override
     public boolean useSpecialAbility(Character target) {
-        // TODO: Implement this method
-        throw new UnsupportedOperationException("Not implemented yet");
+        Character p = this;
+        if (this.BERSERK_RAGE_COST - this.rage < 0) {
+            this.rage -= BERSERK_RAGE_COST;
+            target.takeDamage(p.calculateAttackDamage());
+            return true;
+        }
+        return false;
     }
     
     /**
@@ -76,9 +92,19 @@ public class Warrior extends Character {
     @Override
     public void takeDamage(int damage) {
         // TODO: Implement this method
+        int RedDmg = 0;
+        for (Armor p : this.equippedArmor.values()) {
+            RedDmg = p.reduceDamage(damage);
+            if (RedDmg > 0) {
+                this.currentHealth -= RedDmg;
+                this.rage += RAGE_PER_HIT;
+            }
+        }
+        if (rage > MAX_RAGE) {
+            rage = MAX_RAGE;
+        }
         // 1. קרא ל-super.takeDamage(damage) (אחרי שתממש אותו)
         // 2. הוסף זעם
-        throw new UnsupportedOperationException("Not implemented yet");
     }
     
     // ============================================================
@@ -94,8 +120,12 @@ public class Warrior extends Character {
      * @return true אם החסימה הצליחה
      */
     public boolean shieldBlock(int incomingDamage) {
-        // TODO: Implement this method
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (useMana(20)) {
+            incomingDamage = (int) Math.ceil(incomingDamage * 0.75);
+            takeDamage(incomingDamage);
+            return true;
+        }
+        return false;
     }
     
     // Getters

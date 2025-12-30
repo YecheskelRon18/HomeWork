@@ -33,10 +33,17 @@ public class Mage extends Character {
      */
     @Override
     protected void onLevelUp() {
-        // TODO: Implement this method
-        throw new UnsupportedOperationException("Not implemented yet");
+        this.maxHealth += 8;
+        this.maxMana += 25;
+        this.baseStrength += 1;
+        this.baseDefense += 1;
+        this.spellPower += 5;
+
+        this.currentHealth = this.maxHealth;
+        this.currentMana = this.maxMana;
     }
-    
+
+
     /**
      * TODO: מימוש calculateAttackDamage
      * נזק קוסם בסיסי = baseStrength + נזק נשק (אם יש)
@@ -46,10 +53,16 @@ public class Mage extends Character {
      */
     @Override
     public int calculateAttackDamage() {
-        // TODO: Implement this method
-        throw new UnsupportedOperationException("Not implemented yet");
+        int weaponDamage = 0;
+
+        if (this.equippedWeapon != null) {
+            weaponDamage = (int) this.equippedWeapon.getAverageDamage();
+        }
+
+        return this.baseStrength + weaponDamage;
     }
-    
+
+
     /**
      * TODO: מימוש useSpecialAbility - Fireball
      * יכולת מיוחדת: כדור אש
@@ -62,10 +75,16 @@ public class Mage extends Character {
      */
     @Override
     public boolean useSpecialAbility(Character target) {
-        // TODO: Implement this method
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (this.currentMana < FIREBALL_MANA_COST) {
+            return false;
+        }
+        this.currentMana -= FIREBALL_MANA_COST;
+        int damage = calculateSpellDamage(1.5);
+        target.takeDamage(damage);
+        return true;
     }
-    
+
+
     // ============================================================
     // TODO: מתודות ייחודיות לקוסם
     // ============================================================
@@ -79,10 +98,18 @@ public class Mage extends Character {
      * @return true אם הכישוף הצליח
      */
     public boolean castHeal() {
-        // TODO: Implement this method
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (this.currentMana < HEAL_MANA_COST) {
+            return false;
+        }
+        this.currentMana -= HEAL_MANA_COST;
+        this.currentHealth += this.spellPower;
+        if (this.currentHealth > this.maxHealth) {
+            this.currentHealth = this.maxHealth;
+        }
+        return true;
     }
-    
+
+
     /**
      * TODO: מימוש castManaShield
      * מגן מאנה - משתמש במאנה במקום בחיים לספיגת נזק.
@@ -92,13 +119,20 @@ public class Mage extends Character {
      * @return הנזק שנותר אחרי ספיגת המגן (אם המאנה לא הספיקה)
      */
     public int castManaShield(int incomingDamage) {
-        // TODO: Implement this method
-        // 1. חשב כמה מאנה צריך לספוג את כל הנזק
-        // 2. אם יש מספיק מאנה, ספוג הכל והחזר 0
-        // 3. אם אין מספיק, ספוג כמה שאפשר והחזר את השאר
-        throw new UnsupportedOperationException("Not implemented yet");
+        int maxAbsorb = this.currentMana * 2;
+
+        if (maxAbsorb >= incomingDamage) {
+            int manaUsed = (int) Math.ceil(incomingDamage / 2.0);
+            this.currentMana -= manaUsed;
+            return 0;
+        } else {
+            // אין מספיק מאנה
+            this.currentMana = 0;
+            return incomingDamage - maxAbsorb;
+        }
     }
-    
+
+
     /**
      * TODO: מימוש calculateSpellDamage
      * מחשב נזק כישוף לפי מכפיל.
@@ -108,10 +142,10 @@ public class Mage extends Character {
      * @return נזק הכישוף (מספר שלם, עגל כלפי מעלה)
      */
     public int calculateSpellDamage(double multiplier) {
-        // TODO: Implement this method
-        throw new UnsupportedOperationException("Not implemented yet");
+        return (int) Math.ceil(this.spellPower * multiplier);
     }
-    
+
+
     // Getters
     public int getSpellPower() {
         return spellPower;

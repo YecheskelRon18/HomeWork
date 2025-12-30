@@ -69,8 +69,7 @@ public abstract class Item implements Tradeable {
      */
     @Override
     public int getBuyPrice() {
-        // TODO: Implement this method
-        throw new UnsupportedOperationException("Not implemented yet");
+        return (int) (this.basePrice * this.rarity.priceMultiplier);
     }
     
     /**
@@ -80,8 +79,7 @@ public abstract class Item implements Tradeable {
      */
     @Override
     public int getSellPrice() {
-        // TODO: Implement this method
-        throw new UnsupportedOperationException("Not implemented yet");
+        return (int) (getBuyPrice() / 2);
     }
     
     /**
@@ -91,8 +89,7 @@ public abstract class Item implements Tradeable {
      */
     @Override
     public boolean isSellable() {
-        // TODO: Implement this method
-        throw new UnsupportedOperationException("Not implemented yet");
+        return (true);
     }
     
     @Override

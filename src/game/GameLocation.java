@@ -1,6 +1,7 @@
 package game;
 
 import model.items.Item;
+
 import java.util.ArrayList;
 
 /**
@@ -40,8 +41,12 @@ public class GameLocation {
      * @param locationId המזהה של המיקום המחובר
      */
     public void addConnection(String locationId) {
-        // TODO: Implement this method
-        throw new UnsupportedOperationException("Not implemented yet");
+        for (String p : this.connectedLocationIds) {
+            if (p.equals(locationId)) {
+                return;
+            }
+        }
+        this.connectedLocationIds.add(locationId);
     }
     
     /**
@@ -52,8 +57,12 @@ public class GameLocation {
      * @return true אם מחובר
      */
     public boolean isConnectedTo(String locationId) {
-        // TODO: Implement this method
-        throw new UnsupportedOperationException("Not implemented yet");
+        for (String p : this.connectedLocationIds) {
+            if (p.equals(locationId)) {
+                return true;
+            }
+        }
+        return false;
     }
     
     /**
@@ -63,8 +72,7 @@ public class GameLocation {
      * @param item הפריט להוספה
      */
     public void addLoot(Item item) {
-        // TODO: Implement this method
-        throw new UnsupportedOperationException("Not implemented yet");
+        loot.add(item);
     }
     
     /**
@@ -74,8 +82,14 @@ public class GameLocation {
      * @return רשימה של כל הפריטים שנאספו
      */
     public ArrayList<Item> collectAllLoot() {
-        // TODO: Implement this method
-        throw new UnsupportedOperationException("Not implemented yet");
+        // TODO: Implement this metho
+        ArrayList<Item> arr = new ArrayList<>();
+        for (Item p : this.loot) {
+            arr.add(p);
+            loot.remove(p);
+        }
+        return arr;
+
     }
     
     /**

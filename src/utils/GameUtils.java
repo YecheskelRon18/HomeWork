@@ -2,6 +2,7 @@ package utils;
 
 import model.characters.Character;
 import model.items.Item;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 
@@ -23,9 +24,12 @@ public class GameUtils {
      * @param items רשימת הפריטים למיון
      */
     public static void sortItemsByPrice(ArrayList<Item> items) {
-        // TODO: Implement this method using anonymous Comparator
-        // items.sort(new Comparator<Item>() { ... });
-        throw new UnsupportedOperationException("Not implemented yet");
+        items.sort(new Comparator<Item>() {
+            @Override
+            public int compare(Item a, Item b) {
+                return Integer.compare(a.getBuyPrice(), b.getBuyPrice());
+            }
+        });
     }
     
     /**
@@ -36,8 +40,12 @@ public class GameUtils {
      * @param items רשימת הפריטים למיון
      */
     public static void sortItemsByPriceDescending(ArrayList<Item> items) {
-        // TODO: Implement this method using anonymous Comparator
-        throw new UnsupportedOperationException("Not implemented yet");
+        items.sort(new Comparator<Item>() {
+            @Override
+            public int compare(Item a, Item b) {
+                return Integer.compare(b.getBuyPrice(), a.getBuyPrice());
+            }
+        });
     }
     
     /**
@@ -49,8 +57,12 @@ public class GameUtils {
      * @param items רשימת הפריטים למיון
      */
     public static void sortItemsByRarity(ArrayList<Item> items) {
-        // TODO: Implement this method using anonymous Comparator
-        throw new UnsupportedOperationException("Not implemented yet");
+        items.sort(new Comparator<Item>() {
+            @Override
+            public int compare(Item a, Item b) {
+                return Integer.compare((int) (a.getRarity().getPriceMultiplier() * 100), (int) (b.getRarity().getPriceMultiplier() * 100));
+            }
+        });
     }
     
     /**
@@ -60,152 +72,99 @@ public class GameUtils {
      * @param items רשימת הפריטים למיון
      */
     public static void sortItemsByName(ArrayList<Item> items) {
-        // TODO: Implement this method using anonymous Comparator
-        throw new UnsupportedOperationException("Not implemented yet");
+        items.sort(new Comparator<Item>() {
+            @Override
+            public int compare(Item a, Item b) {
+                return a.getName().compareTo(b.getName());
+            }
+        });
     }
-    
-    /**
-     * TODO: מימוש sortItemsByWeight
-     * ממיין רשימת פריטים לפי משקל (מהקל לכבד).
-     * 
-     * @param items רשימת הפריטים למיון
-     */
+
+
     public static void sortItemsByWeight(ArrayList<Item> items) {
-        // TODO: Implement this method using anonymous Comparator
-        throw new UnsupportedOperationException("Not implemented yet");
+        items.sort(new Comparator<Item>() {
+            @Override
+            public int compare(Item a, Item b) {
+                return Integer.compare(a.getWeight(), b.getWeight());
+            }
+        });
     }
-    
-    // ============================================================
-    // TODO: מיון דמויות
-    // ============================================================
-    
-    /**
-     * TODO: מימוש sortCharactersByHealth
-     * ממיין רשימת דמויות לפי בריאות נוכחית (מהנמוך לגבוה).
-     * 
-     * @param characters רשימת הדמויות למיון
-     */
+
     public static void sortCharactersByHealth(ArrayList<Character> characters) {
-        // TODO: Implement this method using anonymous Comparator
-        throw new UnsupportedOperationException("Not implemented yet");
+        characters.sort(new Comparator<Character>() {
+            @Override
+            public int compare(Character a, Character b) {
+                return Integer.compare(a.getCurrentHealth(), b.getCurrentHealth());
+            }
+        });
     }
-    
-    /**
-     * TODO: מימוש sortCharactersByLevel
-     * ממיין רשימת דמויות לפי רמה (מהגבוה לנמוך).
-     * 
-     * @param characters רשימת הדמויות למיון
-     */
+
     public static void sortCharactersByLevel(ArrayList<Character> characters) {
-        // TODO: Implement this method using anonymous Comparator
-        throw new UnsupportedOperationException("Not implemented yet");
+        characters.sort(new Comparator<Character>() {
+            @Override
+            public int compare(Character a, Character b) {
+                return Integer.compare(b.getLevel(), a.getLevel());
+            }
+        });
     }
-    
-    // ============================================================
-    // TODO: סינון (Filtering)
-    // ============================================================
-    
-    /**
-     * ממשק פונקציונלי לסינון פריטים.
-     */
-    public interface ItemFilter {
-        boolean accept(Item item);
-    }
-    
-    /**
-     * TODO: מימוש filterItems
-     * מסנן רשימת פריטים לפי תנאי מסוים.
-     * 
-     * @param items רשימת הפריטים
-     * @param filter הפילטר
-     * @return רשימה חדשה עם הפריטים שעברו את הסינון
-     */
-    public static ArrayList<Item> filterItems(ArrayList<Item> items, ItemFilter filter) {
-        // TODO: Implement this method
-        throw new UnsupportedOperationException("Not implemented yet");
-    }
-    
-    /**
-     * TODO: מימוש filterAffordableItems
-     * מסנן פריטים שהשחקן יכול לקנות.
-     * השתמש ב-filterItems עם מחלקה אנונימית!
-     * 
-     * @param items רשימת הפריטים
-     * @param playerGold כמות הזהב של השחקן
-     * @return רשימת פריטים שניתן לקנות
-     */
+
     public static ArrayList<Item> filterAffordableItems(ArrayList<Item> items, int playerGold) {
-        // TODO: Implement this method using anonymous ItemFilter
-        // return filterItems(items, new ItemFilter() { ... });
-        throw new UnsupportedOperationException("Not implemented yet");
+        ArrayList<Item> result = new ArrayList<>();
+        for (Item item : items) {
+            if (item.getBuyPrice() <= playerGold) {
+                result.add(item);
+            }
+        }
+        return result;
     }
-    
-    /**
-     * TODO: מימוש filterByRarity
-     * מסנן פריטים לפי נדירות מינימלית.
-     * 
-     * @param items רשימת הפריטים
-     * @param minRarity הנדירות המינימלית
-     * @return רשימת פריטים בנדירות המבוקשת או יותר
-     */
-    public static ArrayList<Item> filterByRarity(ArrayList<Item> items, 
-                                                  Item.ItemRarity minRarity) {
-        // TODO: Implement this method using anonymous ItemFilter
-        throw new UnsupportedOperationException("Not implemented yet");
+
+    public static ArrayList<Item> filterByRarity(ArrayList<Item> items, Item.ItemRarity minRarity) {
+        ArrayList<Item> result = new ArrayList<>();
+        for (Item item : items) {
+            if (item.getRarity().ordinal() >= minRarity.ordinal()) {
+                result.add(item);
+            }
+        }
+        return result;
     }
-    
-    /**
-     * TODO: מימוש filterLightItems
-     * מסנן פריטים קלים (עד משקל מסוים).
-     * 
-     * @param items רשימת הפריטים
-     * @param maxWeight המשקל המקסימלי
-     * @return רשימת פריטים קלים
-     */
+
     public static ArrayList<Item> filterLightItems(ArrayList<Item> items, int maxWeight) {
-        // TODO: Implement this method using anonymous ItemFilter
-        throw new UnsupportedOperationException("Not implemented yet");
+        ArrayList<Item> result = new ArrayList<>();
+        for (Item item : items) {
+            if (item.getWeight() <= maxWeight) {
+                result.add(item);
+            }
+        }
+        return result;
     }
-    
-    // ============================================================
-    // TODO: פונקציות עזר נוספות
-    // ============================================================
-    
-    /**
-     * TODO: מימוש findBestItem
-     * מוצא את הפריט ה"טוב ביותר" לפי קריטריון מסוים.
-     * 
-     * @param items רשימת הפריטים
-     * @param comparator הקריטריון להשוואה
-     * @return הפריט הטוב ביותר, או null אם הרשימה ריקה
-     */
+
     public static Item findBestItem(ArrayList<Item> items, Comparator<Item> comparator) {
-        // TODO: Implement this method
-        // עבור על כל הפריטים ומצא את ה"גדול" ביותר לפי ה-comparator
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (items == null || items.isEmpty()) {
+            return null;
+        }
+        Item best = items.get(0);
+        for (int i = 1; i < items.size(); i++) {
+            if (comparator.compare(items.get(i), best) > 0) {
+                best = items.get(i);
+            }
+        }
+        return best;
     }
-    
-    /**
-     * TODO: מימוש calculateTotalWeight
-     * מחשב את המשקל הכולל של כל הפריטים ברשימה.
-     * 
-     * @param items רשימת הפריטים
-     * @return המשקל הכולל
-     */
+
     public static int calculateTotalWeight(ArrayList<Item> items) {
-        // TODO: Implement this method
-        throw new UnsupportedOperationException("Not implemented yet");
+        int total = 0;
+        for (Item item : items) {
+            total += item.getWeight();
+        }
+        return total;
     }
-    
-    /**
-     * TODO: מימוש calculateTotalValue
-     * מחשב את הערך הכולל של כל הפריטים (לפי מחיר מכירה).
-     * 
-     * @param items רשימת הפריטים
-     * @return הערך הכולל
-     */
+
     public static int calculateTotalValue(ArrayList<Item> items) {
-        // TODO: Implement this method
-        throw new UnsupportedOperationException("Not implemented yet");
+        int total = 0;
+        for (Item item : items) {
+            total += item.getSellPrice();
+        }
+        return total;
     }
+
 }
